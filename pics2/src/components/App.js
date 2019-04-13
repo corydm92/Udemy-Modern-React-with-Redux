@@ -1,21 +1,27 @@
 import React from "react";
+import unsplash from "../api/unsplash";
 import SearchBar from "./SearchBar";
-
-import config from "../config.json";
+import ImageList from "./ImageList";
 
 class App extends React.Component {
-	handleSearchSubmit(search) {
-		console.log(search);
-	}
+	state = { images: [] };
 
-	componentDidMount() {
-		console.log(config.key);
-	}
+	// async handleSearchSubmit(term) >> before turning into arrow function
+	handleSearchSubmit = async term => {
+		// After turing into arrow function
+
+		const response = await unsplash.get("/search/photos", {
+			params: { query: term } // params is a keyword used by axios for paramaters. The api gives you the query keyword.
+		});
+
+		this.setState({ images: response.data.results });
+	};
 
 	render() {
 		return (
 			<div className='ui container' style={{ marginTop: "10px" }}>
 				<SearchBar onSubmit={this.handleSearchSubmit} />
+				<ImageList images={this.state.images} />
 			</div>
 		);
 	}
